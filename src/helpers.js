@@ -33,54 +33,41 @@ const {
   capitalizeFirstLetter,
 } = require("./utils");
 
+const templateDirPath = "src/templates/";
+
+const removeFileNameFromDir = (filePath) =>
+  filePath.split("/").slice(0, -1).join("/");
+module.exports.removeFileNameFromDir = removeFileNameFromDir;
+
 module.exports.createStoriesDir = () => {
-  const sbPath = "./stories";
+  const currentPath = process.cwd();
+  const filesInTemplateDir = ["react.tsx", "react.jsx"].map((file) =>
+    path.join(templateDirPath, file)
+  );
 
-  accessPromise(sbPath)
-    .then(() => {
-      console.log("Stories directory already exists.");
-    })
-    .catch(() => {
-      mkDirPromise(sbPath)
-        .then(() => {
-          console.log("Stories directory created.");
-        })
-        .catch((err) => {
-          console.log("Error creating stories directory: ", err);
-        });
-    })
-    .then(() => {
-      const currentPath = process.cwd();
+  glob("**/*.tsx", {}, function (er, files) {
+    files.forEach((file) => {
+      // filter out template files
+      if (filesInTemplateDir.includes(file)) return;
+      const fileName = path.basename(file, ".tsx");
+      /**
+       *  Remove files like ComponentName.stories.tsx, ComponentName.types.tsx
+       * // FIXME: Refactor to use regex
+       * */
+      if (fileName.includes(".")) return;
+      // TODO: handle index files
+      const componentName = capitalizeFirstLetter(fileName);
+      const componentPath = removeFileNameFromDir(path.join(currentPath, file));
 
-      glob("**/*[^.].tsx", {}, function (er, files) {
-        files.forEach((file) => {
-          if (file === "src/templates/react.tsx") return;
-          const fileName = path.basename(file, ".tsx");
-          /**
-           * // FIXME: Remove files like ComponentName.stories.tsx, ComponentName.types.tsx
-           * Refactor to use regex
-           * */
-          if (fileName.includes(".")) return;
-          // TODO: handle index files
-          const componentName = capitalizeFirstLetter(fileName);
-          const componentPath = path.join(currentPath, file);
-          // console.log(componentName, componentPath);
-          const storyPath = path.join(
-            currentPath,
-            "stories",
-            `${fileName}.stories.tsx`
-          );
-          // console.log(storyPath);
-          readFilePromiseRelative(templatePath)
-            .then((template) =>
-              template.replace(/COMPONENT_NAME/g, componentName)
-            )
-            .then((template) => {
-              writeFilePromise(storyPath, template);
-            });
+      const storyPath = path.join(componentPath, `${fileName}.stories.tsx`);
+      // console.log(storyPath);
+      readFilePromiseRelative(templatePath)
+        .then((template) => template.replace(/COMPONENT_NAME/g, componentName))
+        .then((template) => {
+          writeFilePromise(storyPath, template);
         });
-      });
     });
+  });
 };
 
 module.exports.logError = (error) => {

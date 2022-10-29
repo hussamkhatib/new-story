@@ -15,7 +15,6 @@ program
       process.exit(0);
     }
     createStoriesDir();
-    // getComponentNames();
   });
 
 program.parse();
