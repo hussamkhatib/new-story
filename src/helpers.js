@@ -7,72 +7,69 @@ uninteresting parts of the code, specific to this codebase.
 NOTE: For generalized concerns that aren't specific to this project,
 use `utils.js` instead.
 */
-// const os = require("os");
 const path = require("path");
 const fs = require("fs");
+const glob = require("glob");
+
+const templatePath = `./templates/react.tsx`;
 
 const {
   readDirPromise,
   readFilePromise,
   writeFilePromise,
   mkDirPromise,
+  accessPromise,
   readFilePromiseRelative,
   capitalizeFirstLetter,
 } = require("./utils");
 
 module.exports.createStoriesDir = () => {
   const sbPath = "./stories";
-  fs.access(sbPath, (error) => {
-    // To check if the given directory
-    // already exists or not
-    if (error) {
-      // then create it
-      // If current directory does not exist
-      fs.mkdir(sbPath, (error) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("New Directory created successfully !!");
-        }
-      });
-    } else {
-      console.log("Given Directory already exists !!");
-    }
-  });
-};
 
-const getComponentNames = () => {
-  const currentPath = process.cwd();
-  // readDirPromise(currentPath).then((files) => console.log(files, "current"));
-  console.log({ currentPath });
-  readDirPromise(currentPath).then((files) => {
-    for (const file of files) {
-      const next = path.join(currentPath, file);
+  accessPromise(sbPath)
+    .then(() => {
+      console.log("Stories directory already exists.");
+    })
+    .catch(() => {
+      mkDirPromise(sbPath)
+        .then(() => {
+          console.log("Stories directory created.");
+        })
+        .catch((err) => {
+          console.log("Error creating stories directory: ", err);
+        });
+    })
+    .then(() => {
+      const currentPath = process.cwd();
 
-      if (fs.lstatSync(next).isDirectory() == true) {
-        getComponentNames(next);
-      } else {
-        let [fileName, extension] = file.split(".");
-
-        if (extension === "js") extension = "jsx";
-
-        const componentName = capitalizeFirstLetter(fileName);
-        if (
-          fileName[0]?.toUpperCase() === fileName[0] &&
-          (extension === "jsx" || extension === "tsx")
-        ) {
-          const templatePath = `./templates/react.${extension}`;
+      glob("**/*[^.].tsx", {}, function (er, files) {
+        files.forEach((file) => {
+          if (file === "src/templates/react.tsx") return;
+          const fileName = path.basename(file, ".tsx");
+          console.log(fileName);
+          /**
+           * // FIXME: Remove files like ComponentName.stories.tsx, ComponentName.types.tsx
+           * Refactor to use regex
+           * */
+          if (fileName.includes(".")) return;
+          // TODO: handle index files
+          const componentName = capitalizeFirstLetter(fileName);
+          const componentPath = path.join(currentPath, file);
+          // console.log(componentName, componentPath);
+          const storyPath = path.join(
+            currentPath,
+            "stories",
+            `${fileName}.stories.tsx`
+          );
+          // console.log(storyPath);
           readFilePromiseRelative(templatePath)
             .then((template) =>
               template.replace(/COMPONENT_NAME/g, componentName)
             )
             .then((template) => {
-              const fileLocation = `${currentPath}/stories/${componentName}.stories.tsx`;
-              writeFilePromise(fileLocation, template);
+              writeFilePromise(storyPath, template);
             });
-        }
-      }
-    }
-  });
+        });
+      });
+    });
 };
-module.exports.getComponentNames = getComponentNames;

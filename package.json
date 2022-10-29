@@ -1,6 +1,6 @@
 {
   "name": "new-story",
-  "version": "0.0.13",
+  "version": "0.0.18",
   "description": "Integrate storybook in seconds to your existing app",
   "main": "src/index.js",
   "bin": {
@@ -20,8 +20,8 @@
     "url": "https://github.com/hussamkhatib/make-story/issues"
   },
   "homepage": "https://github.com/hussamkhatib/make-story#readme",
-  "devDependencies": {},
   "dependencies": {
-    "commander": "^9.4.1"
+    "commander": "^9.4.1",
+    "glob": "^8.0.3"
   }
 }

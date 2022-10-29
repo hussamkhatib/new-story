@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command } = require("commander");
 const program = new Command();
-const { getComponentNames, createStoriesDir } = require("./helpers");
+const { createStoriesDir } = require("./helpers");
 
 program
   .command("make-story")
@@ -9,7 +9,7 @@ program
   .version("0.0.13")
   .action(() => {
     createStoriesDir();
-    getComponentNames();
+    // getComponentNames();
   });
 
 program.parse();

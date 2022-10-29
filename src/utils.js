@@ -54,8 +54,18 @@ module.exports.mkDirPromise = (dirPath) =>
     });
   });
 
+module.exports.accessPromise = (fileLocation) =>
+  new Promise((resolve, reject) => {
+    fs.access(fileLocation, (err) => {
+      err ? reject(err) : resolve();
+    });
+  });
+
 module.exports.capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
 
 module.exports.readFilePromiseRelative = (fileLocation) =>
   module.exports.readFilePromise(path.join(__dirname, fileLocation));
+
+
+  
