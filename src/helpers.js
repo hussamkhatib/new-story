@@ -12,7 +12,7 @@ const fs = require("fs");
 const glob = require("glob");
 const chalk = require("chalk");
 
-const templatePath = `./templates/react.tsx`;
+const templatePath = (extension) => `./templates/react.${extension}`;
 
 const colors = {
   red: [216, 16, 16],
@@ -33,41 +33,51 @@ const {
   capitalizeFirstLetter,
 } = require("./utils");
 
-const templateDirPath = "src/templates/";
-
 const removeFileNameFromDir = (filePath) =>
   filePath.split("/").slice(0, -1).join("/");
 module.exports.removeFileNameFromDir = removeFileNameFromDir;
 
 module.exports.createStoriesDir = () => {
   const currentPath = process.cwd();
-  const filesInTemplateDir = ["react.tsx", "react.jsx"].map((file) =>
-    path.join(templateDirPath, file)
+
+  glob(
+    "**/*(*(*.)tsx|*(*.)jsx)",
+    {
+      ignore: [
+        "**/node_modules/**",
+        "**/*.*.@(js|jsx|ts|tsx)",
+        "src/templates/**",
+      ],
+    },
+    function (er, files) {
+      files.forEach((file) => {
+        const getFile = path.basename(file);
+        const [fileName, extension] = getFile.split(".");
+        /**
+         *  Remove files like badCasingComponentName.tsx
+         * // FIXME: Refactor to use regex
+         * */
+        if (fileName[0].toUpperCase() !== fileName[0]) return;
+        // TODO: handle index files
+        const componentName = capitalizeFirstLetter(fileName);
+        const componentPath = removeFileNameFromDir(
+          path.join(currentPath, file)
+        );
+
+        const storyPath = path.join(
+          componentPath,
+          `${componentName}.stories.${extension}`
+        );
+        readFilePromiseRelative(templatePath(extension))
+          .then((template) =>
+            template.replace(/COMPONENT_NAME/g, componentName)
+          )
+          .then((template) => {
+            writeFilePromise(storyPath, template);
+          });
+      });
+    }
   );
-
-  glob("**/*.tsx", {}, function (er, files) {
-    files.forEach((file) => {
-      // filter out template files
-      if (filesInTemplateDir.includes(file)) return;
-      const fileName = path.basename(file, ".tsx");
-      /**
-       *  Remove files like ComponentName.stories.tsx, ComponentName.types.tsx
-       * // FIXME: Refactor to use regex
-       * */
-      if (fileName.includes(".")) return;
-      // TODO: handle index files
-      const componentName = capitalizeFirstLetter(fileName);
-      const componentPath = removeFileNameFromDir(path.join(currentPath, file));
-
-      const storyPath = path.join(componentPath, `${fileName}.stories.tsx`);
-      // console.log(storyPath);
-      readFilePromiseRelative(templatePath)
-        .then((template) => template.replace(/COMPONENT_NAME/g, componentName))
-        .then((template) => {
-          writeFilePromise(storyPath, template);
-        });
-    });
-  });
 };
 
 module.exports.logError = (error) => {
