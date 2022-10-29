@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { Command } from "commander";
+const { Command } = require("commander");
 const program = new Command();
-import { getConfig, getComponentNames } from "./helpers";
+const { getConfig, getComponentNames } = require("./helpers");
 
 // program
 //   .command("split")

@@ -7,19 +7,19 @@ uninteresting parts of the code, specific to this codebase.
 NOTE: For generalized concerns that aren't specific to this project,
 use `utils.js` instead.
 */
-import os from "os";
-import fs from "fs";
-import path from "path";
+const os = require("os");
+const path = require("path");
+const fs = require("fs");
 
-import {
+const {
   readDirPromise,
   readFilePromise,
   writeFilePromise,
   mkDirPromise,
   capitalizeFirstLetter,
-} from "./utils";
+} = require("./utils");
 
-export const getConfig = () => {
+module.exports.getConfig = () => {
   const home = os.homedir();
   const currentPath = process.cwd();
   readDirPromise(`${currentPath}/src/ui`).then((files) => {
@@ -43,7 +43,7 @@ export const getConfig = () => {
 
 // recursive function to get all files in a directory
 
-export const getComponentNames = async (dir: string) => {
+const getComponentNames = async (dir) => {
   const currentPath = process.cwd();
 
   await readDirPromise(dir).then((files) => {
@@ -75,3 +75,4 @@ export const getComponentNames = async (dir: string) => {
     }
   });
 };
+module.exports.getComponentNames = getComponentNames;

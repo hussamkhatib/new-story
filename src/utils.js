@@ -9,10 +9,10 @@ data munging, etc.
 NOTE: Utils should be general enough to be useful in any Node application.
 For application-specific concerns, use `helpers.js`.
 */
-import fs from "fs";
+const fs = require("fs");
 
-export const readDirPromise = (dirLocation: string) =>
-  new Promise<string[]>((resolve, reject) => {
+module.exports.readDirPromise = (dirLocation) =>
+  new Promise((resolve, reject) => {
     fs.readdir(dirLocation, "utf-8", (err, data) => {
       if (err) {
         reject(err);
@@ -24,8 +24,8 @@ export const readDirPromise = (dirLocation: string) =>
 
 // Simple promise wrappers for read/write files.
 // utf-8 is assumed.
-export const readFilePromise = (fileLocation: string) =>
-  new Promise<string>((resolve, reject) => {
+module.exports.readFilePromise = (fileLocation) =>
+  new Promise((resolve, reject) => {
     fs.readFile(fileLocation, "utf-8", (err, data) => {
       if (err) {
         reject(err);
@@ -35,8 +35,8 @@ export const readFilePromise = (fileLocation: string) =>
     });
   });
 
-export const writeFilePromise = (fileLocation: string, fileContent: string) =>
-  new Promise<void>((resolve, reject) => {
+module.exports.writeFilePromise = (fileLocation, fileContent) =>
+  new Promise((resolve, reject) => {
     fs.writeFile(fileLocation, fileContent, (err) => {
       if (err) {
         reject(err);
@@ -46,12 +46,12 @@ export const writeFilePromise = (fileLocation: string, fileContent: string) =>
     });
   });
 
-export const mkDirPromise = (dirPath: string) =>
-  new Promise<void>((resolve, reject) => {
+module.exports.mkDirPromise = (dirPath) =>
+  new Promise((resolve, reject) => {
     fs.mkdir(dirPath, (err) => {
       err ? reject(err) : resolve();
     });
   });
 
-export const capitalizeFirstLetter = (string: string) =>
+module.exports.capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
