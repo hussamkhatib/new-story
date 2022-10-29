@@ -13,7 +13,12 @@
     "type": "git",
     "url": "https://github.com/hussamkhatib/new-story.git"
   },
-  "keywords": [],
+  "keywords": [
+    "storybook",
+    "node",
+    "cli",
+    "boilerplate"
+  ],
   "author": "Hussam Khatib",
   "license": "ISC",
   "bugs": {
