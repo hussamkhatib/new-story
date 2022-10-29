@@ -1,13 +1,14 @@
 {
-  "name": "make-story",
-  "version": "0.0.1",
+  "name": "new-story",
+  "version": "0.0.4",
   "description": "Integrate storybook in seconds to your existing app",
   "main": "src/index.ts",
   "bin": {
-    "make-story": "./src/index.ts"
+    "new-story": "./src/index.ts"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "node out/index.js",
+    "build": " tsc --outDir out src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -15,7 +16,7 @@
   },
   "keywords": [],
   "author": "Hussam Khatib",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/hussamkhatib/make-story/issues"
   },
