@@ -1,13 +1,19 @@
 #!/usr/bin/env node
-const { Command } = require("commander");
+const { Command, Option } = require("commander");
 const program = new Command();
-const { createStoriesDir } = require("./helpers");
+const { createStoriesDir, logError } = require("./helpers");
 
 program
   .command("make-story")
   .description("Make a story")
-  .version("0.0.13")
-  .action(() => {
+  .addOption(
+    new Option("-t, --template <name>", "template name").choices(["react-ts"])
+  )
+  .action((arg) => {
+    if (!arg.template) {
+      logError("Template name is required.");
+      process.exit(0);
+    }
     createStoriesDir();
     // getComponentNames();
   });

@@ -10,8 +10,18 @@ use `utils.js` instead.
 const path = require("path");
 const fs = require("fs");
 const glob = require("glob");
+const chalk = require("chalk");
 
 const templatePath = `./templates/react.tsx`;
+
+const colors = {
+  red: [216, 16, 16],
+  green: [142, 215, 0],
+  blue: [0, 186, 255],
+  gold: [255, 204, 0],
+  mediumGray: [128, 128, 128],
+  darkGray: [90, 90, 90],
+};
 
 const {
   readDirPromise,
@@ -46,7 +56,6 @@ module.exports.createStoriesDir = () => {
         files.forEach((file) => {
           if (file === "src/templates/react.tsx") return;
           const fileName = path.basename(file, ".tsx");
-          console.log(fileName);
           /**
            * // FIXME: Remove files like ComponentName.stories.tsx, ComponentName.types.tsx
            * Refactor to use regex
@@ -72,4 +81,11 @@ module.exports.createStoriesDir = () => {
         });
       });
     });
+};
+
+module.exports.logError = (error) => {
+  console.info("\n");
+  console.info(chalk.bold.rgb(...colors.red)("Error creating Stories."));
+  console.info(chalk.rgb(...colors.red)(error));
+  console.info("\n");
 };
