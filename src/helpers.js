@@ -19,33 +19,31 @@ const {
   capitalizeFirstLetter,
 } = require("./utils");
 
-module.exports.getConfig = () => {
-  const home = os.homedir();
-  const currentPath = process.cwd();
-  readDirPromise(`${currentPath}/src/ui`).then((files) => {
-    for (const file of files) {
-      //   if (file.isFile());
-      // @ts-ignore
+module.exports.createStoriesDir = () => {
+  const sbPath = "./src/stories";
+  fs.access(sbPath, (error) => {
+    // To check if the given directory
+    // already exists or not
+    if (error) {
+      // then create it
+      // If current directory does not exist
+      fs.mkdir(sbPath, (error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("New Directory created successfully !!");
+        }
+      });
+    } else {
+      console.log("Given Directory already exists !!");
     }
   });
-  readFilePromise(`${currentPath}/src/templates/react.tsx`)
-    .then((template) => {
-      const Alert = template.replace(/COMPONENT_NAME/g, "Alert");
-      return Alert;
-    })
-    .then((template) => {
-      const fileLocation = `${currentPath}/src/templates/react.tsx`;
-      writeFilePromise(fileLocation, template);
-    });
-
-  return { home, currentPath };
 };
-
-// recursive function to get all files in a directory
 
 const getComponentNames = async (dir) => {
   const currentPath = process.cwd();
-
+  const home = os.homedir();
+  // console.log({ home, currentPath, path });
   await readDirPromise(dir).then((files) => {
     for (const file of files) {
       const next = path.join(dir, file);

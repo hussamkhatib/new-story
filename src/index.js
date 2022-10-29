@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command } = require("commander");
 const program = new Command();
-const { getConfig, getComponentNames } = require("./helpers");
+const { getComponentNames, createStoriesDir } = require("./helpers");
 
 // program
 //   .command("split")
@@ -17,7 +17,8 @@ const { getConfig, getComponentNames } = require("./helpers");
 program
   .command("make-story")
   .description("Make a story")
-  .action(async (dir) => {
+  .action(async () => {
+    createStoriesDir();
     const files = await getComponentNames(__dirname);
     console.log("---------------------------");
     console.log(files);
