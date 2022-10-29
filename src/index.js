@@ -4,10 +4,10 @@ const program = new Command();
 const { createStoriesDir, logError } = require("./helpers");
 
 program
-  .command("make-story")
-  .description("Make a story")
+  .command("stories")
+  .description("Create boilerplate stories for all components")
   .addOption(
-    new Option("-t, --template <name>", "template name").choices(["react-ts"])
+    new Option("-t, --template <name>", "template name").choices(["react"])
   )
   .action((arg) => {
     if (!arg.template) {

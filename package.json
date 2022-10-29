@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hussamkhatib/make-story.git"
+    "url": "https://github.com/hussamkhatib/new-story.git"
   },
   "keywords": [],
   "author": "Hussam Khatib",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hussamkhatib/make-story/issues"
+    "url": "https://github.com/hussamkhatib/new-story.git/issues"
   },
-  "homepage": "https://github.com/hussamkhatib/make-story#readme",
+  "homepage": "https://github.com/hussamkhatib/new-story.git#readme",
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
