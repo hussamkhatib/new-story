@@ -10,6 +10,7 @@ NOTE: Utils should be general enough to be useful in any Node application.
 For application-specific concerns, use `helpers.js`.
 */
 const fs = require("fs");
+const path = require("path");
 
 module.exports.readDirPromise = (dirLocation) =>
   new Promise((resolve, reject) => {
@@ -55,3 +56,6 @@ module.exports.mkDirPromise = (dirPath) =>
 
 module.exports.capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
+
+module.exports.readFilePromiseRelative = (fileLocation) =>
+  module.exports.readFilePromise(path.join(__dirname, fileLocation));

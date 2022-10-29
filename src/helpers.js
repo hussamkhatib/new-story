@@ -7,7 +7,7 @@ uninteresting parts of the code, specific to this codebase.
 NOTE: For generalized concerns that aren't specific to this project,
 use `utils.js` instead.
 */
-const os = require("os");
+// const os = require("os");
 const path = require("path");
 const fs = require("fs");
 
@@ -16,11 +16,12 @@ const {
   readFilePromise,
   writeFilePromise,
   mkDirPromise,
+  readFilePromiseRelative,
   capitalizeFirstLetter,
 } = require("./utils");
 
 module.exports.createStoriesDir = () => {
-  const sbPath = "./src/stories";
+  const sbPath = "./stories";
   fs.access(sbPath, (error) => {
     // To check if the given directory
     // already exists or not
@@ -40,13 +41,13 @@ module.exports.createStoriesDir = () => {
   });
 };
 
-const getComponentNames = async (dir) => {
+const getComponentNames = () => {
   const currentPath = process.cwd();
-  const home = os.homedir();
-  // console.log({ home, currentPath, path });
-  await readDirPromise(dir).then((files) => {
+  // readDirPromise(currentPath).then((files) => console.log(files, "current"));
+  console.log({ currentPath });
+  readDirPromise(currentPath).then((files) => {
     for (const file of files) {
-      const next = path.join(dir, file);
+      const next = path.join(currentPath, file);
 
       if (fs.lstatSync(next).isDirectory() == true) {
         getComponentNames(next);
@@ -57,15 +58,16 @@ const getComponentNames = async (dir) => {
 
         const componentName = capitalizeFirstLetter(fileName);
         if (
-          fileName[0].toUpperCase() === fileName[0] &&
+          fileName[0]?.toUpperCase() === fileName[0] &&
           (extension === "jsx" || extension === "tsx")
         ) {
-          readFilePromise(`${currentPath}/src/templates/react.${extension}`)
+          const templatePath = `./templates/react.${extension}`;
+          readFilePromiseRelative(templatePath)
             .then((template) =>
               template.replace(/COMPONENT_NAME/g, componentName)
             )
             .then((template) => {
-              const fileLocation = `${currentPath}/src/stories/${componentName}.stories.tsx`;
+              const fileLocation = `${currentPath}/stories/${componentName}.stories.tsx`;
               writeFilePromise(fileLocation, template);
             });
         }
