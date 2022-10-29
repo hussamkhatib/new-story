@@ -1,17 +1,17 @@
 {
   "name": "make-story",
-  "version": "1.0.2",
+  "version": "0.0.1",
   "description": "Integrate storybook in seconds to your existing app",
   "main": "src/index.ts",
   "bin": {
-    "new-component": "./src/index.ts"
+    "make-story": "./src/index.ts"
   },
   "scripts": {
     "start": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hussamkhatib/make-story.git"
+    "url": "https://github.com/hussamkhatib/make-story.git"
   },
   "keywords": [],
   "author": "Hussam Khatib",

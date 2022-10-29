@@ -4,11 +4,6 @@ const program = new Command();
 import { getConfig, getComponentNames } from "./helpers";
 
 // program
-//   .name("string-util")
-//   .description("CLI to some JavaScript string utilities")
-//   .version("0.8.0");
-
-// program
 //   .command("split")
 //   .description("Split a string into substrings and display as an array")
 //   .argument("<string>", "string to split")
@@ -22,7 +17,6 @@ import { getConfig, getComponentNames } from "./helpers";
 program
   .command("make-story")
   .description("Make a story")
-  .argument("<dir>", "directory to make story")
   .action(async (dir) => {
     const files = await getComponentNames(__dirname);
     console.log("---------------------------");

@@ -42,9 +42,8 @@ export const getConfig = () => {
 };
 
 // recursive function to get all files in a directory
-export const getComponentNames = async (dir: string) => {
-  console.log({ dir });
 
+export const getComponentNames = async (dir: string) => {
   const currentPath = process.cwd();
 
   await readDirPromise(dir).then((files) => {
@@ -54,10 +53,16 @@ export const getComponentNames = async (dir: string) => {
       if (fs.lstatSync(next).isDirectory() == true) {
         getComponentNames(next);
       } else {
-        const [fileName, extension] = file.split(".");
+        let [fileName, extension] = file.split(".");
+
+        if (extension === "js") extension = "jsx";
+
         const componentName = capitalizeFirstLetter(fileName);
-        if (extension === "tsx") {
-          readFilePromise(`${currentPath}/src/templates/react.tsx`)
+        if (
+          fileName[0].toUpperCase() === fileName[0] &&
+          (extension === "jsx" || extension === "tsx")
+        ) {
+          readFilePromise(`${currentPath}/src/templates/react.${extension}`)
             .then((template) =>
               template.replace(/COMPONENT_NAME/g, componentName)
             )
@@ -69,12 +74,4 @@ export const getComponentNames = async (dir: string) => {
       }
     }
   });
-};
-
-export const filterComponents = (files: string[]) => {
-  const filteredFiles = files.filter((file) => {
-    return file.includes(".tsx");
-  });
-
-  return filteredFiles;
 };
