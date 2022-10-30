@@ -15,11 +15,8 @@ const chalk = require("chalk");
 const templatePath = (extension) => `./templates/react.${extension}`;
 
 const {
-  readDirPromise,
   readFilePromise,
   writeFilePromise,
-  mkDirPromise,
-  accessPromise,
   readFilePromiseRelative,
   capitalizeFirstLetter,
   splitStr,
@@ -49,6 +46,13 @@ const logItemCompletion = (successText) => {
 };
 module.exports.logItemCompletion = logItemCompletion;
 
+const logConclusion = () => {
+  console.info("\n");
+  console.info(chalk.bold.rgb(...colors.green)("Stories created! 🚀 "));
+  console.info(chalk.rgb(...colors.mediumGray)("Thanks for using new-story."));
+  console.info("\n");
+};
+
 const removeFileNameFromDir = (filePath) =>
   filePath.split("/").slice(0, -1).join("/");
 module.exports.removeFileNameFromDir = removeFileNameFromDir;
@@ -65,11 +69,13 @@ module.exports.createStories = () => {
         "src/templates/**",
       ],
     },
-    function (er, files) {
+    function (err, files) {
+      if (err) {
+        logError(err);
+        process.exit(0);
+      }
       files.forEach((file) => {
-        const getFile = path;
-        // .basename(file);
-        console.log(getFile);
+        const getFile = path.basename(file);
         const [fileName, extension] = getFile.split(".");
         /**
          *  Remove files like badCasingComponentName.tsx
@@ -89,7 +95,9 @@ module.exports.createStories = () => {
           .then((template) => template.replace(/COMPONENT_NAME/g, fileName))
           .then((template) => {
             writeFilePromise(storyPath, template);
-          });
+          })
+          .then(logConclusion())
+          .catch((err) => console.error(err));
       });
     }
   );
@@ -124,7 +132,11 @@ module.exports.createStory = (file, props = undefined) => {
       })
       .then((fileData) => {
         writeFilePromise(file, fileData);
-      });
+      })
+      .then(() => {
+        logConclusion();
+      })
+      .catch((err) => console.error(err));
   } else {
     readFilePromiseRelative(templatePath(extension))
       .then((template) => template.replace(/COMPONENT_NAME/g, fileName))
@@ -146,6 +158,10 @@ module.exports.createStory = (file, props = undefined) => {
       })
       .then((template) => {
         writeFilePromise(`${currentPath}/${file}`, template);
-      });
+      })
+      .then(() => {
+        logConclusion();
+      })
+      .catch((err) => console.error(err));
   }
 };
