@@ -107,7 +107,7 @@ module.exports.createStory = (file, props = undefined) => {
   const currentPath = process.cwd();
   const getFile = path.basename(file);
   const [fileName, _, extension] = getFile.split(".");
-  const storyWrapper = `export const PROP_NAME = () => <div>STORIES</div>;`;
+  const storyWrapper = `export const PROP_NAME = () => <div className="space-x-4">STORIES</div>;`;
   const story = `<COMPONENT_NAME PROP_KEY_PAIR />`;
 
   if (fs.existsSync(`./${file}`)) {

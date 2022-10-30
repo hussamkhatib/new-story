@@ -1,6 +1,6 @@
 {
   "name": "new-story",
-  "version": "0.0.24",
+  "version": "0.0.26",
   "description": "Integrate storybook in seconds to your existing app",
   "main": "src/index.js",
   "bin": {
