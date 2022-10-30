@@ -14,6 +14,17 @@ const chalk = require("chalk");
 
 const templatePath = (extension) => `./templates/react.${extension}`;
 
+const {
+  readDirPromise,
+  readFilePromise,
+  writeFilePromise,
+  mkDirPromise,
+  accessPromise,
+  readFilePromiseRelative,
+  capitalizeFirstLetter,
+  splitStr,
+} = require("./utils");
+
 const colors = {
   red: [216, 16, 16],
   green: [142, 215, 0],
@@ -23,21 +34,11 @@ const colors = {
   darkGray: [90, 90, 90],
 };
 
-const {
-  readDirPromise,
-  readFilePromise,
-  writeFilePromise,
-  mkDirPromise,
-  accessPromise,
-  readFilePromiseRelative,
-  capitalizeFirstLetter,
-} = require("./utils");
-
 const removeFileNameFromDir = (filePath) =>
   filePath.split("/").slice(0, -1).join("/");
 module.exports.removeFileNameFromDir = removeFileNameFromDir;
 
-module.exports.createStoriesDir = () => {
+module.exports.createStories = () => {
   const currentPath = process.cwd();
 
   glob(

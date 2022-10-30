@@ -67,5 +67,4 @@ module.exports.capitalizeFirstLetter = (string) =>
 module.exports.readFilePromiseRelative = (fileLocation) =>
   module.exports.readFilePromise(path.join(__dirname, fileLocation));
 
-
-  
+module.exports.splitStr = (value, seperator) => value.split(`${seperator}`);

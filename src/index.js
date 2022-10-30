@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command, Option } = require("commander");
 const program = new Command();
-const { createStoriesDir, logError } = require("./helpers");
+const { createStories, logError } = require("./helpers");
 
 program
   .command("stories")
@@ -14,7 +14,13 @@ program
       logError("Template name is required.");
       process.exit(0);
     }
-    createStoriesDir();
+    createStories();
   });
+
+program
+  .command("story")
+  .description("Create story for a single component")
+  .option("-p, --props <todo>", "pipe separated props")
+  .action((args) => {});
 
 program.parse();
