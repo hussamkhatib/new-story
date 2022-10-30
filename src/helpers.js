@@ -96,9 +96,9 @@ module.exports.createStories = () => {
           .then((template) => {
             writeFilePromise(storyPath, template);
           })
-          .then(logConclusion())
           .catch((err) => console.error(err));
       });
+      logConclusion();
     }
   );
 };
@@ -107,7 +107,8 @@ module.exports.createStory = (file, props = undefined) => {
   const currentPath = process.cwd();
   const getFile = path.basename(file);
   const [fileName, _, extension] = getFile.split(".");
-  const story = `const PROP_NAME = <COMPONENT_NAME PROP_KEY_PAIR />;`;
+  const storyWrapper = `export const PROP_NAME = () => <div>STORIES</div>;`;
+  const story = `<COMPONENT_NAME PROP_KEY_PAIR />`;
 
   if (fs.existsSync(`./${file}`)) {
     if (!props) {
@@ -120,18 +121,21 @@ module.exports.createStory = (file, props = undefined) => {
       .then((fileData) => {
         const [key, value] = splitStr(props, "=");
         const values = value.split(",");
+        let stories = "";
         for (const val of values) {
           const newStory = story
-            .replace(/PROP_NAME/g, capitalizeFirstLetter(val))
             .replace(/PROP_KEY_PAIR/g, `${key}="${val}"`)
             .replace(/COMPONENT_NAME/g, fileName);
-
-          fileData += newStory;
+          stories += newStory;
         }
+        const finalSb = storyWrapper
+          .replace(/STORIES/g, stories)
+          .replace(/PROP_NAME/g, capitalizeFirstLetter(key));
+        fileData += finalSb;
         return fileData;
       })
       .then((fileData) => {
-        writeFilePromise(file, fileData);
+        writeFilePromise(`${currentPath}/${file}`, fileData);
       })
       .then(() => {
         logConclusion();
@@ -145,15 +149,18 @@ module.exports.createStory = (file, props = undefined) => {
 
         const [key, value] = splitStr(props, "=");
         const values = value.split(",");
+        let stories = "";
         for (const val of values) {
           const newStory = story
-            .replace(/PROP_NAME/g, capitalizeFirstLetter(val))
             .replace(/PROP_KEY_PAIR/g, `${key}="${val}"`)
             .replace(/COMPONENT_NAME/g, fileName);
 
-          template += newStory;
+          stories += newStory;
         }
-
+        const finalSb = storyWrapper
+          .replace(/STORIES/g, stories)
+          .replace(/PROP_NAME/g, capitalizeFirstLetter(key));
+        template += finalSb;
         return template;
       })
       .then((template) => {

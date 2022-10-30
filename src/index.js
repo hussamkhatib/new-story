@@ -16,7 +16,6 @@ program
   .option("-f, --file <pathToFile>", "file name")
   .option("-p, --props <todo>", "pipe separated props")
   .action((args) => {
-    console.log(args);
     if (!args.file) {
       logError("File name is required.");
       process.exit(0);
