@@ -34,6 +34,21 @@ const colors = {
   darkGray: [90, 90, 90],
 };
 
+const logError = (error) => {
+  console.info("\n");
+  console.info(chalk.bold.rgb(...colors.red)("Error creating Stories."));
+  console.info(chalk.rgb(...colors.red)(error));
+  console.info("\n");
+};
+
+module.exports.logError = logError;
+
+const logItemCompletion = (successText) => {
+  const checkmark = chalk.rgb(...colors.green)("✓");
+  console.info(`${checkmark} ${successText}`);
+};
+module.exports.logItemCompletion = logItemCompletion;
+
 const removeFileNameFromDir = (filePath) =>
   filePath.split("/").slice(0, -1).join("/");
 module.exports.removeFileNameFromDir = removeFileNameFromDir;
@@ -52,7 +67,9 @@ module.exports.createStories = () => {
     },
     function (er, files) {
       files.forEach((file) => {
-        const getFile = path.basename(file);
+        const getFile = path;
+        // .basename(file);
+        console.log(getFile);
         const [fileName, extension] = getFile.split(".");
         /**
          *  Remove files like badCasingComponentName.tsx
@@ -60,19 +77,16 @@ module.exports.createStories = () => {
          * */
         if (fileName[0].toUpperCase() !== fileName[0]) return;
         // TODO: handle index files
-        const componentName = capitalizeFirstLetter(fileName);
         const componentPath = removeFileNameFromDir(
           path.join(currentPath, file)
         );
 
         const storyPath = path.join(
           componentPath,
-          `${componentName}.stories.${extension}`
+          `${fileName}.stories.${extension}`
         );
         readFilePromiseRelative(templatePath(extension))
-          .then((template) =>
-            template.replace(/COMPONENT_NAME/g, componentName)
-          )
+          .then((template) => template.replace(/COMPONENT_NAME/g, fileName))
           .then((template) => {
             writeFilePromise(storyPath, template);
           });
@@ -81,9 +95,57 @@ module.exports.createStories = () => {
   );
 };
 
-module.exports.logError = (error) => {
-  console.info("\n");
-  console.info(chalk.bold.rgb(...colors.red)("Error creating Stories."));
-  console.info(chalk.rgb(...colors.red)(error));
-  console.info("\n");
+module.exports.createStory = (file, props = undefined) => {
+  const currentPath = process.cwd();
+  const getFile = path.basename(file);
+  const [fileName, _, extension] = getFile.split(".");
+  const story = `const PROP_NAME = <COMPONENT_NAME PROP_KEY_PAIR />;`;
+
+  if (fs.existsSync(`./${file}`)) {
+    if (!props) {
+      logError(
+        "File already exists, You need to pass props you add stories on top of it."
+      );
+      process.exit(0);
+    }
+    readFilePromise(file)
+      .then((fileData) => {
+        const [key, value] = splitStr(props, "=");
+        const values = value.split(",");
+        for (const val of values) {
+          const newStory = story
+            .replace(/PROP_NAME/g, capitalizeFirstLetter(val))
+            .replace(/PROP_KEY_PAIR/g, `${key}="${val}"`)
+            .replace(/COMPONENT_NAME/g, fileName);
+
+          fileData += newStory;
+        }
+        return fileData;
+      })
+      .then((fileData) => {
+        writeFilePromise(file, fileData);
+      });
+  } else {
+    readFilePromiseRelative(templatePath(extension))
+      .then((template) => template.replace(/COMPONENT_NAME/g, fileName))
+      .then((template) => {
+        if (!props) return template;
+
+        const [key, value] = splitStr(props, "=");
+        const values = value.split(",");
+        for (const val of values) {
+          const newStory = story
+            .replace(/PROP_NAME/g, capitalizeFirstLetter(val))
+            .replace(/PROP_KEY_PAIR/g, `${key}="${val}"`)
+            .replace(/COMPONENT_NAME/g, fileName);
+
+          template += newStory;
+        }
+
+        return template;
+      })
+      .then((template) => {
+        writeFilePromise(`${currentPath}/${file}`, template);
+      });
+  }
 };
