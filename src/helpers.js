@@ -135,7 +135,7 @@ module.exports.createStory = (file, props = undefined) => {
         return fileData;
       })
       .then((fileData) => {
-        writeFilePromise(`${currentPath}/${file}`, fileData);
+        writeFilePromise(file, fileData);
       })
       .then(() => {
         logConclusion();
@@ -164,7 +164,7 @@ module.exports.createStory = (file, props = undefined) => {
         return template;
       })
       .then((template) => {
-        writeFilePromise(`${currentPath}/${file}`, template);
+        writeFilePromise(file, template);
       })
       .then(() => {
         logConclusion();
