@@ -21,7 +21,9 @@ program
       process.exit(0);
     }
     // TODO: chekc if stories file is entered
-    createStory(args.file, args.props);
+
+    const filePath = `${process.env.INIT_CWD}/${args.file}`;
+    createStory(filePath, args.props);
   });
 
 program.parse();
