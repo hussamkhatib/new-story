@@ -35,3 +35,5 @@ new-story story -f <filepathfromroot> -p <props>
 ```
 
 Look into this [example](https://github.com/hussamkhatib/my-sb-app) for detailed instructions.
+
+## Note
