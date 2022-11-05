@@ -103,21 +103,24 @@ module.exports.createStories = () => {
   );
 };
 
-module.exports.createStory = (file, props = undefined) => {
-  const currentPath = process.cwd();
-  const getFile = path.basename(file);
+module.exports.createStory = ({
+  fullPath,
+  pathFromFlag,
+  props = undefined,
+}) => {
+  const getFile = path.basename(fullPath);
   const [fileName, _, extension] = getFile.split(".");
   const storyWrapper = `export const PROP_NAME = () => <div className="space-x-4">STORIES</div>;`;
   const story = `<COMPONENT_NAME PROP_KEY_PAIR />`;
 
-  if (fs.existsSync(`./${file}`)) {
+  if (fs.existsSync(pathFromFlag)) {
     if (!props) {
       logError(
         "File already exists, You need to pass props you add stories on top of it."
       );
       process.exit(0);
     }
-    readFilePromise(file)
+    readFilePromise(fullPath)
       .then((fileData) => {
         const [key, value] = splitStr(props, "=");
         const values = value.split(",");
@@ -135,7 +138,7 @@ module.exports.createStory = (file, props = undefined) => {
         return fileData;
       })
       .then((fileData) => {
-        writeFilePromise(file, fileData);
+        writeFilePromise(fullPath, fileData);
       })
       .then(() => {
         logConclusion();
@@ -164,7 +167,7 @@ module.exports.createStory = (file, props = undefined) => {
         return template;
       })
       .then((template) => {
-        writeFilePromise(file, template);
+        writeFilePromise(fullPath, template);
       })
       .then(() => {
         logConclusion();
