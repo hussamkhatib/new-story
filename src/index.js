@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { Command, Option } = require("commander");
+const { Command } = require("commander");
 const program = new Command();
 const { createStories, createStory, logError } = require("./helpers");
 
@@ -21,9 +21,12 @@ program
       process.exit(0);
     }
     // TODO: chekc if stories file is entered
-
     const filePath = `${process.env.INIT_CWD}/${args.file}`;
-    createStory(filePath, args.props);
+    createStory({
+      fullPath: filePath,
+      pathFromFlag: args.file,
+      props: args.props,
+    });
   });
 
 program.parse();
